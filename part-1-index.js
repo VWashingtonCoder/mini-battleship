@@ -49,7 +49,10 @@ function runGame() {
     while (ships.length > 0) {
         let userEntry = rs.keyInSelect(defaultBoard, 'Enter a location to strike (ie A2)');
         
-        if (userEntry === -1) return;
+        if (userEntry === -1){
+            active = false;
+            return;
+        } 
         else handleGuess(defaultBoard[userEntry]);
     }    
 }
