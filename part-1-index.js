@@ -44,8 +44,6 @@ function handleGuess(guess) {
 function runGame() {
     setShips();
 
-    console.log(`ships: ${ships}, guesses: ${guesses}`);
-
     while (ships.length > 0) {
         let userEntry = rs.keyInSelect(defaultBoard, 'Enter a location to strike (ie A2)');
         
