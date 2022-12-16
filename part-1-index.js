@@ -7,15 +7,19 @@ const defaultBoard = [
 ];
 let ships = [];
 let guesses = [];
+let active = true;
+
 
 function randomNumber(max) { return Math.floor(Math.random() * max); };
 
 function setShips() {
     let board = defaultBoard;
     const shipOne = board[randomNumber(board.length)];
+    
     board = board.filter((ship) => ship !== shipOne);
     
     const shipTwo = board[randomNumber(board.length)];
+    
     ships.push(shipOne, shipTwo);
 };
 
@@ -25,9 +29,7 @@ function handleGuess(guess) {
     if(guesses.includes(guess)) {
         console.log('You have already picked this location. Miss!');
         return;
-    } else {
-        guesses.push(guess);
-    }
+    } else guesses.push(guess);
     
     if(ships.includes(guess)) {
         ships.splice(id, 1);
@@ -36,42 +38,35 @@ function handleGuess(guess) {
             console.log(`Hit. You sunk a battle ship. ${ships.length} ship remaining.`);
             guesses.push(guess);
         } 
-    } else {
-        console.log('You have missed!');    
-    };
+    } else console.log('You have missed!');    
 };
 
 function runGame() {
+    setShips();
+
+    console.log(`ships: ${ships}, guesses: ${guesses}`);
+
     while (ships.length > 0) {
         let userEntry = rs.keyInSelect(defaultBoard, 'Enter a location to strike (ie A2)');
         
-        console.log(`
-            ships: ${ships},
-            guesses: ${guesses}
-        `)    
-        
-        if (userEntry === -1) {
-            return;
-        } else {
-            handleGuess(defaultBoard[userEntry]);
-        }
+        if (userEntry === -1) return;
+        else handleGuess(defaultBoard[userEntry]);
     }    
 }
 
+function restart() {
+    const restart = rs.keyInYN('You have destroyed all battleships. Would you like to play again? ');
+
+    if(restart === true) {
+        guesses = [];
+        runGame();
+    } else active = restart;
+}
 
 const start = rs.keyIn('Press any key to start the game');
 
-if (start) {
-    setShips();
-    runGame();
-};
+if (start) runGame();
 
-const restart = rs.keyInYN('You have destroyed all battleships. Would you like to play again? ');
-
-if(restart === 'y') {
-    setShips();
-    runGame();
-} else {
-    return;
+while(active === true){
+    restart();
 }
-
