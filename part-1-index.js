@@ -1,29 +1,77 @@
 var rs = require('readline-sync');
 
-let board = [
+const defaultBoard = [
     'A1', 'A2', 'A3', 
     'B1', 'B2', 'B3', 
     'C1', 'C2', 'C3'
 ];
 let ships = [];
+let guesses = [];
 
-function randomNumber(max) { return Math.floor(Math.random() * max); }
+function randomNumber(max) { return Math.floor(Math.random() * max); };
 
 function setShips() {
+    let board = defaultBoard;
     const shipOne = board[randomNumber(board.length)];
-    const removedBoard = board.filter((ship) => ship !== shipOne);
-    const shipTwo = removedBoard[randomNumber(removedBoard.length)];
-
+    board = board.filter((ship) => ship !== shipOne);
+    
+    const shipTwo = board[randomNumber(board.length)];
     ships.push(shipOne, shipTwo);
-}
+};
 
+function handleGuess(guess) {
+    const id = ships.indexOf(guess);
+    
+    if(guesses.includes(guess)) {
+        console.log('You have already picked this location. Miss!');
+        return;
+    } else {
+        guesses.push(guess);
+    }
+    
+    if(ships.includes(guess)) {
+        ships.splice(id, 1);
+
+        if (ships.length === 1){
+            console.log(`Hit. You sunk a battle ship. ${ships.length} ship remaining.`);
+            guesses.push(guess);
+        } 
+    } else {
+        console.log('You have missed!');    
+    };
+};
+
+function runGame() {
+    while (ships.length > 0) {
+        let userEntry = rs.keyInSelect(defaultBoard, 'Enter a location to strike (ie A2)');
+        
+        console.log(`
+            ships: ${ships},
+            guesses: ${guesses}
+        `)    
+        
+        if (userEntry === -1) {
+            return;
+        } else {
+            handleGuess(defaultBoard[userEntry]);
+        }
+    }    
+}
 
 
 const start = rs.keyIn('Press any key to start the game');
 
 if (start) {
     setShips();
+    runGame();
 };
 
-console.log(ships);
+const restart = rs.keyInYN('You have destroyed all battleships. Would you like to play again? ');
+
+if(restart === 'y') {
+    setShips();
+    runGame();
+} else {
+    return;
+}
 
