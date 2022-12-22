@@ -36,7 +36,6 @@ function handleGuess(guess) {
 
         if (ships.length === 1){
             console.log(`Hit. You sunk a battle ship. ${ships.length} ship remaining.`);
-            guesses.push(guess);
         } 
     } else console.log('You have missed!');    
 };
